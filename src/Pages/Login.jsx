@@ -83,8 +83,8 @@ const Login = ({ navigation }) => {
 
         alert("Login realizado com sucesso!")
 
-        // setEmail("")
-        // setPassword("")
+        setEmail("")
+        setSenha("")
       })
       .catch((error) => {
         const errorCode = error.code;

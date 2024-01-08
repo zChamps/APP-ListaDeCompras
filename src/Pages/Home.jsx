@@ -35,7 +35,11 @@ const Home = ({ navigation }) => {
 
 
 
-
+  useEffect(() => {
+    if(uid === ""){
+      navigation.navigate("Login")
+    }
+  })
 
 
 
@@ -56,7 +60,7 @@ const Home = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={{color: "#169C89", fontSize: 15, fontWeight: "bold", marginBottom: "10%"}}>Sair da conta!</Text>
+      <Text style={{color: "#169C89", fontSize: 15, fontWeight: "bold", marginBottom: "10%"}} onPress={() => setUid("")}>Sair da conta!</Text>
     </View>
   )
 }

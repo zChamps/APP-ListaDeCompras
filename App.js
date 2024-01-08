@@ -6,10 +6,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './src/Pages/Home';
-import About from './src/Pages/About';
+import About from './src/Pages/LCPrimaria';
 import Register from './src/Pages/Register';
 import Login from './src/Pages/Login';
 import { UserContextProvider } from './src/Context/UserContext';
+import LCPrimaria from './src/Pages/LCPrimaria';
 
 
 const Stack = createNativeStackNavigator();
@@ -21,10 +22,10 @@ export default function App() {
     <UserContextProvider>
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen name="LCPrimaria" component={LCPrimaria} options={({ route, navigation }) => ({ title: '', headerBackTitleVisible: false })}/>
           <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
           <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
           <Stack.Screen name="Home" component={Home} options={{ headerShown: false }}/>
-          <Stack.Screen name="About" component={About} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
