@@ -5,22 +5,47 @@ import ListItem from '../Components/ListItem';
 
 
 const LCPrimaria = ({ navigation }) => {
+  const [modalControl, setModalCOntrol] = useState(false)
+  const handleModal = () => setModalCOntrol(false)
+  const [itemAdicionar, setItemAdicionar] = useState("")
 
 
+  const handleAdicionarProduto = () => {
+      console.log("Produto adicionado:", itemAdicionar)
+      setModalCOntrol(false)
+      setItemAdicionar("")
+  }
 
 
   return (
     <View style={styles.container}>
       <Text style={{ color: "#169C89", fontSize: 30, fontWeight: "bold", marginBottom: "12%", marginTop: "6%" }}>Sua lista de compras completa:</Text>
-      <TouchableOpacity style={styles.botoesListas}>
+      <TouchableOpacity onPress={() => setModalCOntrol(true)} style={styles.botoesListas}>
         <Text style={styles.textoBotao}>Adicionar novo item!</Text>
       </TouchableOpacity>
 
 
+      <Modal animationType='slide' visible={modalControl} transparent={true} >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalStyle}>
+            <Text style={styles.TextModal}>Escreva abaixo qual item deseja adicionar a lista:</Text>
+            <TextInput onChangeText={valor => setItemAdicionar(valor)} style={styles.TextInput} value={itemAdicionar} placeholder='Produto...' />
+
+            <TouchableOpacity onPress={handleAdicionarProduto} style={styles.botaoModalAdicionarProduto}>
+              <Text style={styles.textoBotao}>Adicionar Produto!</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleModal} style={styles.botaoModalSair}>
+              <Text style={styles.textoBotao}>Sair</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <View style={{ backgroundColor: "#F3F3F3", paddingVertical: 12, marginBottom: 30 }}>
 
         <Text style={{ paddingLeft: 8 }}> Observações:</Text>
-        
+
         <Text style={styles.textoObs}>
           <Text> {'\u2022'}</Text>
           <Text >  Caso já tenha colocado o item no carrinho, marque o check box.</Text>
@@ -33,7 +58,7 @@ const LCPrimaria = ({ navigation }) => {
 
       </View>
 
-      <ListItem item={{isChecked: true, nomeProduto: "Creatina"}}/>
+      <ListItem item={{ isChecked: true, nomeProduto: "Creatina" }} />
     </View>
   )
 }
@@ -54,6 +79,26 @@ const styles = StyleSheet.create({
     marginBottom: 30
 
   },
+  botaoModalAdicionarProduto: {
+    marginTop: "8%",
+    paddingVertical: 15,
+    width: "100%",
+    borderColor: "#DDDDDD",
+    borderWidth: 2,
+    borderRadius: 15,
+    marginBottom: 30
+
+  },
+  botaoModalSair: {
+    marginTop: "8%",
+    paddingVertical: 5,
+    width: "50%",
+    borderColor: "#DDDDDD",
+    borderWidth: 2,
+    borderRadius: 15,
+    marginBottom: 30
+
+  },
   textoBotao: {
     color: "#169C89",
     fontSize: 20,
@@ -64,7 +109,41 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     fontSize: 11,
     paddingRight: 15,
-    
+
+  },
+  modalContainer: {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    marginVertical: "50%",
+
+  },
+
+  modalStyle: {
+    width: "80%",
+    backgroundColor: "white",
+    height: 400,
+    paddingHorizontal: 30,
+    borderWidth: 3,
+    borderColor: "#DDDDDD",
+    borderRadius: 25
+
+  },
+  TextModal: {
+    marginTop: "10%",
+    fontSize: 22,
+    color: "#169C89"
+  },
+  TextInput: {
+    marginTop: "8%",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    gap: 10,
+    alignItems: "center",
+    borderColor: "#DDDDDD",
+    borderWidth: 2,
+    borderRadius: 10,
+    backgroundColor: "F8F8F8"
   }
 })
 
