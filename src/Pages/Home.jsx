@@ -57,7 +57,7 @@ const Home = ({ navigation }) => {
           <TouchableOpacity onPress={() => navigation.navigate("LCPrimaria")} style={styles.botoesListas}>
             <Text style={styles.textoBotao}>Lista de Compras Completa</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.botoesListas}>
+          <TouchableOpacity onPress={() => navigation.navigate("LCSecundaria")} style={styles.botoesListas}>
             <Text style={styles.textoBotao}>Listas de Compras Secundárias</Text>
           </TouchableOpacity>
         </View>

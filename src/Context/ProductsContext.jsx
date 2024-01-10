@@ -15,7 +15,7 @@ export const ProductsContextProvider = ({children}) => {
     const {uid, setUid} = useContext(UserContext)
 
     const [data, setData] = useState([])
-
+    const [secondaryLists, setSecondaryLists] = useState([])
 
     useEffect(() => {
         const db = getDatabase()
@@ -44,12 +44,45 @@ export const ProductsContextProvider = ({children}) => {
       }, [uid])
 
 
-    //   data && console.log(Object.keys(data))
+    
+      
+
+      useEffect(() => {
+        const db = getDatabase()
+        async function Dados(){
+
+    
+
+            const listas = ref(db, `users/${uid}/secondaryLists`)
+    
+            await onValue(listas, snapshot => {
+              const data = snapshot.val()
+    
+                
+              if(data){
+                const dataArray = Object.keys(data).map((key) => ({
+                    id: key,
+                    
+                  }));
+                  setSecondaryLists(dataArray)
+            }        
+              
+          })
+          }
+          Dados()
+    
+      }, [uid])
+
+
+
+
+
+console.log(secondaryLists)
 
 
     return(
         // Definir os valores disponiveis dentro do context provider
-        <ProductsContext.Provider value={{data, setData}}>
+        <ProductsContext.Provider value={{data, setData, secondaryLists, setSecondaryLists}}>
             {children}
         </ProductsContext.Provider>
     )
