@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { ScrollView, StyleSheet, Text, View, FlatList, Switch, TextInput, Button, TouchableOpacity, Modal, Image, ActivityIndicator, Animated, SafeAreaView, Keyboard } from 'react-native';
 import { Dimensions } from 'react-native';
 import { useNavigate } from 'react-router-dom';
+import { LogBox } from 'react-native';
 
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -12,8 +13,8 @@ import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPas
 import {getDatabase, ref, onValue, set, remove, child, push, update} from "firebase/database"
 
 
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage'
+LogBox.ignoreLogs(['@firebase/auth']);
 
 const Login = ({ navigation }) => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
@@ -45,7 +46,7 @@ const Login = ({ navigation }) => {
       navigation.navigate("Home")
     }
   }, [uid])
-
+  
 
 
 
@@ -69,7 +70,7 @@ const Login = ({ navigation }) => {
   const [senha, setSenha] = useState("")
 
 
-  console.log("UID: ",uid)
+  // console.log("UID: ",uid)
 
   const handleLogin = () => {
     
@@ -85,6 +86,19 @@ const Login = ({ navigation }) => {
 
         setEmail("")
         setSenha("")
+
+        try {
+          // Armazena os dados no AsyncStorage
+          AsyncStorage.setItem('uid', uidRegister);
+    
+        } catch (error) {
+          console.error('Erro ao armazenar os dados:', error);
+        }
+
+
+
+
+
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -95,7 +109,7 @@ const Login = ({ navigation }) => {
 
 
   }
-
+  // console.log(uid)
   return (
     <>
       <SafeAreaView style={styles.container}>

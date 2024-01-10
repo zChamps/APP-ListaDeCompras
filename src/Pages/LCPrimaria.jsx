@@ -2,18 +2,32 @@ import React, { useState, useEffect, useContext } from 'react'
 import { ScrollView, StyleSheet, Text, View, FlatList, Switch, TextInput, Button, TouchableOpacity, Modal, Image, ActivityIndicator, Animated } from 'react-native';
 import { getDatabase, ref, onValue, set, remove, child, push, update } from "firebase/database"
 import ListItem from '../Components/ListItem';
+import { ProductsContext } from '../Context/ProductsContext';
+import { UserContext } from '../Context/UserContext';
 
 
 const LCPrimaria = ({ navigation }) => {
   const [modalControl, setModalCOntrol] = useState(false)
   const handleModal = () => setModalCOntrol(false)
-  const [itemAdicionar, setItemAdicionar] = useState("")
 
+  const [itemAdicionar, setItemAdicionar] = useState("")
+  const { data, setData } = useContext(ProductsContext)
+
+  const db = getDatabase()
+
+  const { uid, setUid } = useContext(UserContext)
 
   const handleAdicionarProduto = () => {
-      console.log("Produto adicionado:", itemAdicionar)
-      setModalCOntrol(false)
-      setItemAdicionar("")
+    const newPostKey = push(child(ref(db), 'users')).key;
+    set(ref(db, `users/${uid}/products/${newPostKey}`), {
+        id: newPostKey,
+        name: itemAdicionar,
+        isChecked: false
+      });
+
+
+    setModalCOntrol(false)
+    setItemAdicionar("")
   }
 
 
@@ -57,8 +71,10 @@ const LCPrimaria = ({ navigation }) => {
         </Text>
 
       </View>
-
-      <ListItem item={{ isChecked: true, nomeProduto: "Creatina" }} />
+      
+      {data && <FlatList data={data} keyExtractor={(item) => item.id} renderItem={({ item }) => {
+        return <ListItem item={item} />
+      }} />}
     </View>
   )
 }
@@ -81,7 +97,7 @@ const styles = StyleSheet.create({
   },
   botaoModalAdicionarProduto: {
     marginTop: "8%",
-    paddingVertical: 15,
+    paddingVertical: 10,
     width: "100%",
     borderColor: "#DDDDDD",
     borderWidth: 2,
@@ -96,7 +112,8 @@ const styles = StyleSheet.create({
     borderColor: "#DDDDDD",
     borderWidth: 2,
     borderRadius: 15,
-    marginBottom: 30
+    marginTop: 50,
+    marginBottom: 10
 
   },
   textoBotao: {
@@ -136,14 +153,14 @@ const styles = StyleSheet.create({
   },
   TextInput: {
     marginTop: "8%",
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 20,
     gap: 10,
     alignItems: "center",
     borderColor: "#DDDDDD",
     borderWidth: 2,
     borderRadius: 10,
-    backgroundColor: "F8F8F8"
+    backgroundColor: "#F8F8F8"
   }
 })
 

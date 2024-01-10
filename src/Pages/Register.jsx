@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 
-
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['@firebase/auth']);
 
 import database from "../Firebase/FirebaseConnection"
 import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "firebase/auth";
@@ -14,6 +15,9 @@ import {getDatabase, ref, onValue, set, remove, child, push, update} from "fireb
 
 
 import { UserContext } from '../Context/UserContext';
+
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 const Register = ({ navigation }) => {
@@ -90,7 +94,7 @@ const Register = ({ navigation }) => {
         // Signed up 
         const user = userCredential.user;
         alert(`Usuário criado com sucesso: ${user.email}`)
-        console.log(user)
+        // console.log(user)
 
         const uidRegister = user.uid;
         setUid(uidRegister)
@@ -99,6 +103,23 @@ const Register = ({ navigation }) => {
           email: email
           
         });
+
+
+
+        try {
+          // Armazena os dados no AsyncStorage
+          AsyncStorage.setItem('uid', uidRegister);
+    
+        } catch (error) {
+          console.error('Erro ao armazenar os dados:', error);
+        }
+
+
+
+
+
+
+
 
       })
       .catch((error) => {

@@ -11,6 +11,7 @@ import Register from './src/Pages/Register';
 import Login from './src/Pages/Login';
 import { UserContextProvider } from './src/Context/UserContext';
 import LCPrimaria from './src/Pages/LCPrimaria';
+import { ProductsContextProvider } from './src/Context/ProductsContext';
 
 
 const Stack = createNativeStackNavigator();
@@ -20,14 +21,16 @@ export default function App() {
 
   return (
     <UserContextProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="LCPrimaria" component={LCPrimaria} options={({ route, navigation }) => ({ title: '', headerBackTitleVisible: false })}/>
-          <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-          <Stack.Screen name="Home" component={Home} options={{ headerShown: false }}/>
-        </Stack.Navigator>
-      </NavigationContainer>
+      <ProductsContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+            <Stack.Screen name="LCPrimaria" component={LCPrimaria} options={({ route, navigation }) => ({ title: '', headerBackTitleVisible: false })} />
+            <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ProductsContextProvider>
     </UserContextProvider>
   );
 }
