@@ -1,56 +1,67 @@
+// LCSecundariaComponent
+
 import React, { useState, useEffect, useContext } from 'react'
 import { ScrollView, StyleSheet, Text, View, FlatList, Switch, TextInput, Button, TouchableOpacity, Modal, Image, ActivityIndicator, Animated } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import { getDatabase, ref, onValue, set, remove, child, push, update } from "firebase/database"
 import ListItem from '../Components/ListItem';
 import { ProductsContext } from '../Context/ProductsContext';
 import { UserContext } from '../Context/UserContext';
 
 
-const db = getDatabase()
-const LCSecundaria = ({ navigation }) => {
+const LCSecundariaComponent = ({ navigation }) => {
+    const route = useRoute();
+    const { dadosLista } = route.params;
+
+    const productArray = Object.values(dadosLista.products);
+    // console.log(productArray)
+
   const [modalControl, setModalCOntrol] = useState(false)
   const handleModal = () => setModalCOntrol(false)
+
   const [itemAdicionar, setItemAdicionar] = useState("")
+  const { secondaryLists, setSecondaryLists } = useContext(ProductsContext)
 
+  const db = getDatabase()
 
-  const { uid } = useContext(UserContext)
-  const { secondaryLists } = useContext(ProductsContext)
+  const { uid, setUid } = useContext(UserContext)
 
-  const handleAdicionarLista = () => {
+  
+  
+
+  const handleAdicionarProduto = () => {
     const newPostKey = push(child(ref(db), 'users')).key;
-    set(ref(db, `users/${uid}/secondaryLists/${itemAdicionar}`), {
-          id: itemAdicionar
+    set(ref(db, `users/${uid}/secondaryLists/${dadosLista.id}/products/${newPostKey}`), {
+        id: newPostKey,
+        name: itemAdicionar,
+        isChecked: false
       });
 
-    console.log("Lista a ser adicionada: ", itemAdicionar)
+
     setModalCOntrol(false)
     setItemAdicionar("")
+    const uidTeste = uid
+    setUid("")
+    setUid(uidTeste)
   }
-
-
-
 
 
   return (
     <View style={styles.container}>
-      <View style={{ borderBottomColor: "#CFCFCF", borderBottomWidth: 3 }}>
-        <Text style={{ color: "#169C89", fontSize: 30, fontWeight: "bold", marginBottom: "8%", marginTop: "6%" }}>Suas listas de compras secundárias:</Text>
-        <TouchableOpacity onPress={() => setModalCOntrol(true)} style={styles.botoesListas}>
-          <Text style={styles.textoBotao}>Adicionar nova lista!</Text>
-        </TouchableOpacity>
+      <Text style={{ color: "#169C89", fontSize: 30, fontWeight: "bold", marginBottom: "12%", marginTop: "6%" }}>Lista de compras: {dadosLista.id}</Text>
+      <TouchableOpacity onPress={() => setModalCOntrol(true)} style={styles.botoesListas}>
+        <Text style={styles.textoBotao}>Adicionar novo item!</Text>
+      </TouchableOpacity>
 
 
-
-
-
-        <Modal animationType='slide' visible={modalControl} transparent={true} >
+      <Modal animationType='slide' visible={modalControl} transparent={true} >
         <View style={styles.modalContainer}>
           <View style={styles.modalStyle}>
-            <Text style={styles.TextModal}>Escreva abaixo qual o nome da sua nova lista:</Text>
-            <TextInput onChangeText={valor => setItemAdicionar(valor)} style={styles.TextInput} value={itemAdicionar} placeholder='Lista....' />
+            <Text style={styles.TextModal}>Escreva abaixo qual item deseja adicionar a lista:</Text>
+            <TextInput onChangeText={valor => setItemAdicionar(valor)} style={styles.TextInput} value={itemAdicionar} placeholder='Produto...' />
 
-            <TouchableOpacity onPress={handleAdicionarLista} style={styles.botaoModalAdicionarProduto}>
-              <Text style={styles.textoBotao}>Criar nova lista!</Text>
+            <TouchableOpacity onPress={handleAdicionarProduto} style={styles.botaoModalAdicionarProduto}>
+              <Text style={styles.textoBotao}>Adicionar Produto!</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={handleModal} style={styles.botaoModalSair}>
@@ -60,26 +71,26 @@ const LCSecundaria = ({ navigation }) => {
         </View>
       </Modal>
 
+      <View style={{ backgroundColor: "#F3F3F3", paddingVertical: 12, marginBottom: 30 }}>
 
+        <Text style={{ paddingLeft: 8 }}> Observações:</Text>
 
+        <Text style={styles.textoObs}>
+          <Text> {'\u2022'}</Text>
+          <Text >  Caso já tenha colocado o item no carrinho, marque o check box.</Text>
+        </Text>
 
-
-
-
-
+        <Text style={styles.textoObs}>
+          <Text> {'\u2022'}</Text>
+          <Text >  Utilize essa lista para itens especificos e/ou compras menores.</Text>
+        </Text>
 
       </View>
-      
-      {console.log(secondaryLists)}
-      {secondaryLists ? <FlatList style={{marginTop: "10%"}} data={secondaryLists} keyExtractor={(item) => item.id} renderItem={ ({item}) => {
-        return (<View style={{marginBottom: "1%"}}>
-          <TouchableOpacity onPress={() => navigation.navigate("LCSecundariaComponent", {dadosLista: item})} style={styles.botoesListas}>
-            <Text style={styles.textoBotao}>{item.id}</Text>
-          </TouchableOpacity>
-
-        </View>)
-      } } /> : <Text>Ainda não existem listas criadas.</Text>}
-
+      {/* {console.log(dadosLista.products)} */}
+      {dadosLista && <FlatList data={productArray} keyExtractor={(item) => item.id} renderItem={({ item }) => {
+        console.log("Item: ",item)
+        return <ListItem item={item} isChecked={item.isChecked} nomeLista={dadosLista.id} />
+      }} />}
     </View>
   )
 }
@@ -171,4 +182,4 @@ const styles = StyleSheet.create({
 
 
 
-export default LCSecundaria
+export default LCSecundariaComponent

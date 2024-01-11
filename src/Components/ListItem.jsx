@@ -7,23 +7,60 @@ import { Ionicons } from '@expo/vector-icons';
 import { UserContext } from '../Context/UserContext';
 
 
-const ListItem = ( item ) => {
+const ListItem = ( {item, nomeLista, isChecked } ) => {
     const db = getDatabase();
+    // const dadosItem = Object.values(item)[0];
     
-    const dadosItem = Object.values(item)[0]
-
     const { uid } = useContext(UserContext)
+    
+
+    const [dadosItem, setDadosItem] = useState([])
+    const dadosRadom = true
+    useEffect(() => {
+        const db = getDatabase();
+      
+        async function Dados() {
+          const listas = ref(db, `users/${uid}/secondaryLists/${nomeLista}/products/${item.id}`);
+      
+          await onValue(listas, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const dataArray = Object.keys(data).map((key) => ({
+                    id: key,
+                    products: data[key].products || [], 
+                }));
+                
+                setDadosItem(data);
+            }
+        });
+    }
+    
+    Dados();
+}, [dadosRadom]);
+
+
+console.log("Dados Item",dadosItem)
+
+      
+
+    
+    
+    
     const handleCheckItem = () => {
         
-        const updates = {};
-        updates[`users/${uid}/products/${dadosItem.id}/isChecked`] = !dadosItem.isChecked;
-        // console.log(updates)
+    const updates = {};
+    
+        
+    updates[`users/${uid}/products/${item.id}/isChecked`] = !isChecked;
+    updates[`users/${uid}/secondaryLists/${nomeLista}/products/${item.id}/isChecked`] = !isChecked;
 
-        return update(ref(db), updates)
+    
+
+    return update(ref(db), updates);
     }
 
     const handleDeleteItem = () => {
-        remove(ref(db, `users/${uid}/products/${dadosItem.id}`))
+        remove(ref(db, `users/${uid}/products/${item.id}`))
     }
 
     // console.log(dadosItem)
@@ -31,7 +68,7 @@ const ListItem = ( item ) => {
         <View style={styles.container}>
             <View style={styles.subcontainer}>
                 {dadosItem.isChecked ? <MaterialCommunityIcons onPress={handleCheckItem} name="checkbox-outline" size={26} color="black" style={styles.checkBox}/> : <MaterialCommunityIcons onPress={handleCheckItem} name="checkbox-blank-outline" size={26} color="black" style={styles.checkBox}/>}
-                <Text style={{paddingLeft: 15, fontSize: 18,  }}>{dadosItem.name}</Text>
+                <Text style={{paddingLeft: 15, fontSize: 18,  }}>{item.name}</Text>
             </View>
             <Ionicons onPress={handleDeleteItem} name="trash-outline" size={24} color="black" />
         </View>
