@@ -70,7 +70,7 @@ const LCSecundaria = ({ navigation }) => {
 
       </View>
       
-      {console.log(secondaryLists)}
+      {console.log(secondaryLists[0].products)}
       {secondaryLists ? <FlatList style={{marginTop: "10%"}} data={secondaryLists} keyExtractor={(item) => item.id} renderItem={ ({item}) => {
         return (<View style={{marginBottom: "1%"}}>
           <TouchableOpacity onPress={() => navigation.navigate("LCSecundariaComponent", {dadosLista: item})} style={styles.botoesListas}>

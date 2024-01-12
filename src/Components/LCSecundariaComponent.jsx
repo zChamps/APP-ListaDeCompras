@@ -26,8 +26,20 @@ const LCSecundariaComponent = ({ navigation }) => {
 
   const { uid, setUid } = useContext(UserContext)
 
-  
-  
+  const [localListData, setLocalListData] = useState([]);
+  const localListArray = Object.values(localListData);
+
+
+  useEffect(() => {
+    // Atualize o estado local quando secondaryLists mudar
+    setLocalListData(secondaryLists.find(list => list.id === dadosLista.id)?.products || []);
+}, [secondaryLists, dadosLista.id]);
+
+  console.log("localListData:  ",localListData)
+
+
+
+
 
   const handleAdicionarProduto = () => {
     const newPostKey = push(child(ref(db), 'users')).key;
@@ -86,10 +98,10 @@ const LCSecundariaComponent = ({ navigation }) => {
         </Text>
 
       </View>
-      {/* {console.log(dadosLista.products)} */}
-      {dadosLista && <FlatList data={productArray} keyExtractor={(item) => item.id} renderItem={({ item }) => {
-        console.log("Item: ",item)
-        return <ListItem item={item} isChecked={item.isChecked} nomeLista={dadosLista.id} />
+      {/* {console.log(productArray)} */}
+      {localListArray && <FlatList data={localListArray} keyExtractor={(item) => item.id} renderItem={({ item }) => {
+        // console.log("Item: ",item)
+        return <ListItem item={item} isChecked={item.isChecked} nomeLista={localListData.id} setLocalListData={setLocalListData}/>
       }} />}
     </View>
   )
