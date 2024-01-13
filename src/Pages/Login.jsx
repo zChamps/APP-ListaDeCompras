@@ -121,7 +121,7 @@ const Login = ({ navigation }) => {
           <View style={{ display: 'flex', gap: 8 }}>
             
             <View style={styles.containerInput}><MaterialIcons name="email" size={24} color="#B1B1B1" /><TextInput onChangeText={valor => setEmail(valor)} style={styles.TextInput} value={email} placeholder='Endereço de Email' /></View>
-            <View style={styles.containerInput}><AntDesign name="lock" size={24} color="#B1B1B1" /><TextInput onChangeText={valor => setSenha(valor)} style={styles.TextInput} value={senha} placeholder='Senha' /></View>
+            <View style={styles.containerInput}><AntDesign name="lock" size={24} color="#B1B1B1" /><TextInput onChangeText={valor => setSenha(valor)} style={styles.TextInput} value={senha} secureTextEntry={true} placeholder='Senha' /></View>
             
           </View>
         </View>

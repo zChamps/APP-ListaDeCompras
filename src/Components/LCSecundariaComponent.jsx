@@ -1,10 +1,10 @@
 // LCSecundariaComponent
 
 import React, { useState, useEffect, useContext } from 'react'
-import { ScrollView, StyleSheet, Text, View, FlatList, Switch, TextInput, Button, TouchableOpacity, Modal, Image, ActivityIndicator, Animated } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, FlatList, Switch, TextInput, Button, TouchableOpacity, Modal, Image, ActivityIndicator, Animated, Alert } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { getDatabase, ref, onValue, set, remove, child, push, update } from "firebase/database"
-import ListItem from '../Components/ListItem';
+import ListItemSecondaryLists from './ListItemSecondaryLists';
 import { ProductsContext } from '../Context/ProductsContext';
 import { UserContext } from '../Context/UserContext';
 
@@ -14,7 +14,7 @@ const LCSecundariaComponent = ({ navigation }) => {
     const { dadosLista } = route.params;
 
     const productArray = Object.values(dadosLista.products);
-    // console.log(productArray)
+    console.log(dadosLista)
 
   const [modalControl, setModalCOntrol] = useState(false)
   const handleModal = () => setModalCOntrol(false)
@@ -28,21 +28,22 @@ const LCSecundariaComponent = ({ navigation }) => {
 
   const [localListData, setLocalListData] = useState([]);
   const localListArray = Object.values(localListData);
-
+  
 
   useEffect(() => {
     // Atualize o estado local quando secondaryLists mudar
     setLocalListData(secondaryLists.find(list => list.id === dadosLista.id)?.products || []);
 }, [secondaryLists, dadosLista.id]);
 
-  console.log("localListData:  ",localListData)
+  // console.log("localListData:  ",localListData)
 
 
 
 
 
   const handleAdicionarProduto = () => {
-    const newPostKey = push(child(ref(db), 'users')).key;
+    if(itemAdicionar){
+      const newPostKey = push(child(ref(db), 'users')).key;
     set(ref(db, `users/${uid}/secondaryLists/${dadosLista.id}/products/${newPostKey}`), {
         id: newPostKey,
         name: itemAdicionar,
@@ -52,9 +53,9 @@ const LCSecundariaComponent = ({ navigation }) => {
 
     setModalCOntrol(false)
     setItemAdicionar("")
-    const uidTeste = uid
-    setUid("")
-    setUid(uidTeste)
+    }else{
+      Alert.alert('Aviso', 'Por favor, preencha algum item.');
+    }
   }
 
 
@@ -70,7 +71,7 @@ const LCSecundariaComponent = ({ navigation }) => {
         <View style={styles.modalContainer}>
           <View style={styles.modalStyle}>
             <Text style={styles.TextModal}>Escreva abaixo qual item deseja adicionar a lista:</Text>
-            <TextInput onChangeText={valor => setItemAdicionar(valor)} style={styles.TextInput} value={itemAdicionar} placeholder='Produto...' />
+            <TextInput onChangeText={valor => valor.length <= 20 ? setItemAdicionar(valor) : Alert.alert("Aviso", "Limite de caracteres Ultrapassado.")} style={styles.TextInput} value={itemAdicionar} placeholder='Produto...' />
 
             <TouchableOpacity onPress={handleAdicionarProduto} style={styles.botaoModalAdicionarProduto}>
               <Text style={styles.textoBotao}>Adicionar Produto!</Text>
@@ -100,8 +101,8 @@ const LCSecundariaComponent = ({ navigation }) => {
       </View>
       {/* {console.log(productArray)} */}
       {localListArray && <FlatList data={localListArray} keyExtractor={(item) => item.id} renderItem={({ item }) => {
-        // console.log("Item: ",item)
-        return <ListItem item={item} isChecked={item.isChecked} nomeLista={localListData.id} setLocalListData={setLocalListData}/>
+        const nomeLista = item.id
+        return <ListItemSecondaryLists item={item} isChecked={item.isChecked} nomeLista={dadosLista.id} setLocalListData={setLocalListData}/>
       }} />}
     </View>
   )

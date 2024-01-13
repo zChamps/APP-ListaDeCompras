@@ -7,13 +7,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { UserContext } from '../Context/UserContext';
 import { ProductsContext } from '../Context/ProductsContext';
 
-const ListItem = ({ item, nomeLista, setLocalListData }) => {
+const ListItemSecondaryLists = ({ item, nomeLista, setLocalListData }) => {
     const { secondaryLists, setSecondaryLists } = useContext(ProductsContext)
     const db = getDatabase();
     const { uid } = useContext(UserContext)
     
     const [dadosItem, setDadosItem] = useState([])
-
+    // console.log(nomeLista)
     useEffect(() => {
         const db = getDatabase();
 
@@ -43,22 +43,23 @@ const ListItem = ({ item, nomeLista, setLocalListData }) => {
     
     
     const handleDeleteItem = () => {
-        console.log('Tentando excluir item:', item);
+        console.log('Tentando excluir item:', item.id);
+        console.log("CAMINHO DA EXCLUSÃO: ", `users/${uid}/secondaryLists/${nomeLista}/products/${item.id}`)
         remove(ref(db, `users/${uid}/secondaryLists/${nomeLista}/products/${item.id}`))
             .then(() => {
                 console.log('Item excluído no Firebase com sucesso!');
-                setSecondaryLists((prevLists) => {
-                    const updatedLists = prevLists.map((list) => {
-                        if (list.id === nomeLista) {
-                            return {
-                                ...list,
-                                products: list.products.filter((product) => product.id !== item.id),
-                            };
-                        }
-                        return list;
-                    });
-                    return updatedLists;
-                });
+                // setSecondaryLists((prevLists) => {
+                //     const updatedLists = prevLists.map((list) => {
+                //         if (list.id === nomeLista) {
+                //             return {
+                //                 ...list,
+                //                 products: list.products.filter((product) => product.id !== item.id),
+                //             };
+                //         }
+                //         return list;
+                //     });
+                //     return updatedLists;
+                // });
     
                 // Atualiza o estado local usando a função passada como propriedade
                 setLocalListData((prevData) => {
@@ -139,4 +140,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default ListItem
+export default ListItemSecondaryLists

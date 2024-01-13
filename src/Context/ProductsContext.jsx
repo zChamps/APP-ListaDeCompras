@@ -1,5 +1,3 @@
-// Criar o context
-
 import database from "../Firebase/FirebaseConnection"
 import {getDatabase, ref, onValue} from "firebase/database"
 
@@ -10,7 +8,6 @@ import { UserContext } from './UserContext';
 
 export const ProductsContext = createContext()
 
-// criar o provider, é o elemento que "abraça" os outros
 export const ProductsContextProvider = ({children}) => {
     const {uid, setUid} = useContext(UserContext)
 
@@ -48,40 +45,36 @@ export const ProductsContextProvider = ({children}) => {
       
 
       useEffect(() => {
-        const db = getDatabase()
-        async function Dados(){
-
-    
-
-            const listas = ref(db, `users/${uid}/secondaryLists`)
-    
-            await onValue(listas, snapshot => {
-              const data = snapshot.val()
-    
-                
-              if(data){
-                const dataArray = Object.keys(data).map((key) => ({
-                    id: key,
-                    
-                  }));
-                  setSecondaryLists(dataArray)
-            }        
-              
-          })
-          }
-          Dados()
-    
-      }, [uid])
+        const db = getDatabase();
+      
+        async function Dados() {
+          const listas = ref(db, `users/${uid}/secondaryLists`);
+      
+          await onValue(listas, (snapshot) => {
+            const data = snapshot.val();
+      
+            if (data) {
+              const dataArray = Object.keys(data).map((key) => ({
+                id: key,
+                products: data[key].products || [], 
+              }));
+      
+              setSecondaryLists(dataArray);
+            }
+          });
+        }
+      
+        Dados();
+      }, [uid]);
 
 
 
 
 
-console.log(secondaryLists)
+// console.log(secondaryLists)
 
 
     return(
-        // Definir os valores disponiveis dentro do context provider
         <ProductsContext.Provider value={{data, setData, secondaryLists, setSecondaryLists}}>
             {children}
         </ProductsContext.Provider>

@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingHorizontal: 25,
     justifyContent: "space-between",
-    backgroundColor: "white"
+    backgroundColor: "#ffffff"
   },
   botoesListas:{
     paddingVertical: 20,

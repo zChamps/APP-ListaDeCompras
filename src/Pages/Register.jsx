@@ -40,15 +40,14 @@ const Register = ({ navigation }) => {
       setKeyboardVisible(false);
     });
 
-    // Remove os listeners quando o componente é desmontado
+
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
-  }, []); // Adicionando setKeyboardVisible como dependência
+  }, []); 
 
 
-  // console.log("UID: ",uid)
 
 
 
@@ -59,27 +58,10 @@ const Register = ({ navigation }) => {
   }, [uid])
 
 
-
-
-
-
-
-
-
-
-
-  const windowWidth = Dimensions.get('window').width;
-  const windowHeight = Dimensions.get('window').height;
-  // console.log("Width", windowWidth)
-  // console.log("Height", windowHeight)
-
-
   const [nome, setNome] = useState("")
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
   const [confirmarSenha, setConfirmarSenha] = useState("")
-
-
 
 
   
@@ -87,74 +69,50 @@ const Register = ({ navigation }) => {
     const auth = getAuth();
 
     const newUserKey = push(child(ref(db), "users")).key;
-
-    if(senha === confirmarSenha){
-      await createUserWithEmailAndPassword(auth, email, senha)
-      .then((userCredential) => {
-        // Signed up 
-        const user = userCredential.user;
-        alert(`Usuário criado com sucesso: ${user.email}`)
-        // console.log(user)
-
-        const uidRegister = user.uid;
-        setUid(uidRegister)
-        set(ref(db, `users/${uidRegister}`), {
-          nome: nome,
-          email: email
-          
+    if(nome && email && senha && confirmarSenha){
+      if(senha === confirmarSenha){
+        await createUserWithEmailAndPassword(auth, email, senha)
+        .then((userCredential) => {
+          // Signed up 
+          const user = userCredential.user;
+          alert(`Usuário criado com sucesso: ${user.email}`)
+          // console.log(user)
+  
+          const uidRegister = user.uid;
+          setUid(uidRegister)
+          set(ref(db, `users/${uidRegister}`), {
+            nome: nome,
+            email: email
+            
+          });
+  
+  
+  
+          try {
+            // Armazena os dados no AsyncStorage
+            AsyncStorage.setItem('uid', uidRegister);
+      
+          } catch (error) {
+            console.error('Erro ao armazenar os dados:', error);
+          }
+  
+        })
+        .catch((error) => {
+          console.log("ERRO_CATCH: ", error)
+          // ..
         });
-
-
-
-        try {
-          // Armazena os dados no AsyncStorage
-          AsyncStorage.setItem('uid', uidRegister);
-    
-        } catch (error) {
-          console.error('Erro ao armazenar os dados:', error);
-        }
-
-
-
-
-
-
-
-
-      })
-      .catch((error) => {
-        console.log("ERRO_CATCH: ", error)
-        // ..
-      });
-
-
-
-
-
-
-
-
-
-
-      
-      
-
-
+     
+      }else{
+        Alert.alert("As senhas devem ser iguais!")
+      }
     }else{
-      Alert.alert("As senhas devem ser iguais!")
+      Alert.alert("Aviso!","Todos os campos devem ser preenchidos!")
     }
+    
 
 
 
   }
-
-
-
-
-
-
-
-
 
 
   return (
@@ -168,8 +126,8 @@ const Register = ({ navigation }) => {
           <View style={{ display: 'flex', gap: 8 }}>
             <View style={styles.containerInput}><AntDesign name="user" size={24} color="#B1B1B1" /><TextInput onChangeText={valor => setNome(valor)} style={styles.TextInput} value={nome} placeholder='Primeiro Nome' /></View>
             <View style={styles.containerInput}><MaterialIcons name="email" size={24} color="#B1B1B1" /><TextInput onChangeText={valor => setEmail(valor)} style={styles.TextInput} value={email} placeholder='Endereço de Email' /></View>
-            <View style={styles.containerInput}><AntDesign name="lock" size={24} color="#B1B1B1" /><TextInput onChangeText={valor => setSenha(valor)} style={styles.TextInput} value={senha} placeholder='Senha' /></View>
-            <View style={styles.containerInput}><AntDesign name="lock" size={24} color="#B1B1B1" /><TextInput onChangeText={valor => setConfirmarSenha(valor)} style={styles.TextInput} value={confirmarSenha} placeholder='Confirme sua senha' /></View>
+            <View style={styles.containerInput}><AntDesign name="lock" size={24} color="#B1B1B1" /><TextInput onChangeText={valor => setSenha(valor)} style={styles.TextInput} value={senha} secureTextEntry={true} placeholder='Senha' /></View>
+            <View style={styles.containerInput}><AntDesign name="lock" size={24} color="#B1B1B1" /><TextInput onChangeText={valor => setConfirmarSenha(valor)} style={styles.TextInput} value={confirmarSenha} secureTextEntry={true} placeholder='Confirme sua senha' /></View>
           </View>
         </View>
 

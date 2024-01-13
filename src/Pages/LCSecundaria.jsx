@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { ScrollView, StyleSheet, Text, View, FlatList, Switch, TextInput, Button, TouchableOpacity, Modal, Image, ActivityIndicator, Animated } from 'react-native';
 import { getDatabase, ref, onValue, set, remove, child, push, update } from "firebase/database"
-import ListItem from '../Components/ListItem';
+import ListItemSecondaryLists from '../Components/ListItemSecondaryLists';
 import { ProductsContext } from '../Context/ProductsContext';
 import { UserContext } from '../Context/UserContext';
-
+import { Ionicons } from '@expo/vector-icons';
 
 const db = getDatabase()
 const LCSecundaria = ({ navigation }) => {
@@ -27,15 +27,16 @@ const LCSecundaria = ({ navigation }) => {
     setItemAdicionar("")
   }
 
-
-
+  const handleDeleteList = (item) => {
+      remove(ref(db, `users/${uid}/secondaryLists/${item.id}`))
+  }
 
 
   return (
     <View style={styles.container}>
       <View style={{ borderBottomColor: "#CFCFCF", borderBottomWidth: 3 }}>
         <Text style={{ color: "#169C89", fontSize: 30, fontWeight: "bold", marginBottom: "8%", marginTop: "6%" }}>Suas listas de compras secundárias:</Text>
-        <TouchableOpacity onPress={() => setModalCOntrol(true)} style={styles.botoesListas}>
+        <TouchableOpacity onPress={() => setModalCOntrol(true)} style={styles.botaoNovaLista}>
           <Text style={styles.textoBotao}>Adicionar nova lista!</Text>
         </TouchableOpacity>
 
@@ -47,7 +48,7 @@ const LCSecundaria = ({ navigation }) => {
         <View style={styles.modalContainer}>
           <View style={styles.modalStyle}>
             <Text style={styles.TextModal}>Escreva abaixo qual o nome da sua nova lista:</Text>
-            <TextInput onChangeText={valor => setItemAdicionar(valor)} style={styles.TextInput} value={itemAdicionar} placeholder='Lista....' />
+            <TextInput onChangeText={valor => valor.length <= 20 ? setItemAdicionar(valor) : Alert.alert("Aviso", "Limite de caracteres Ultrapassado.")} style={styles.TextInput} value={itemAdicionar} placeholder='Lista....' />
 
             <TouchableOpacity onPress={handleAdicionarLista} style={styles.botaoModalAdicionarProduto}>
               <Text style={styles.textoBotao}>Criar nova lista!</Text>
@@ -70,11 +71,11 @@ const LCSecundaria = ({ navigation }) => {
 
       </View>
       
-      {console.log(secondaryLists[0].products)}
+      {/* {console.log(secondaryLists[0].products)} */}
       {secondaryLists ? <FlatList style={{marginTop: "10%"}} data={secondaryLists} keyExtractor={(item) => item.id} renderItem={ ({item}) => {
         return (<View style={{marginBottom: "1%"}}>
           <TouchableOpacity onPress={() => navigation.navigate("LCSecundariaComponent", {dadosLista: item})} style={styles.botoesListas}>
-            <Text style={styles.textoBotao}>{item.id}</Text>
+            <Text style={styles.textoBotao}>{item.id}</Text><Ionicons onPress={() => handleDeleteList(item)} name="trash-outline" size={24} color="black" />
           </TouchableOpacity>
 
         </View>)
@@ -93,11 +94,25 @@ const styles = StyleSheet.create({
   },
   botoesListas: {
     paddingVertical: 20,
+    paddingHorizontal: 30,
     width: "100%",
     borderColor: "#DDDDDD",
     borderWidth: 2,
     borderRadius: 15,
-    marginBottom: 30
+    marginBottom: 30,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between"
+
+  },
+
+  botaoNovaLista: {
+    paddingVertical: 20,
+    width: "100%",
+    borderColor: "#DDDDDD",
+    borderWidth: 2,
+    borderRadius: 15,
+    marginBottom: 30,
 
   },
   botaoModalAdicionarProduto: {

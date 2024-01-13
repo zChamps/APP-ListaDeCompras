@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { ScrollView, StyleSheet, Text, View, FlatList, Switch, TextInput, Button, TouchableOpacity, Modal, Image, ActivityIndicator, Animated } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, FlatList, Switch, TextInput, Button, TouchableOpacity, Modal, Image, ActivityIndicator, Animated, Alert } from 'react-native';
 import { getDatabase, ref, onValue, set, remove, child, push, update } from "firebase/database"
-import ListItem from '../Components/ListItem';
+import ListItemPrimaryList from '../Components/ListItemPrimaryList';
 import { ProductsContext } from '../Context/ProductsContext';
 import { UserContext } from '../Context/UserContext';
 
@@ -18,16 +18,21 @@ const LCPrimaria = ({ navigation }) => {
   const { uid, setUid } = useContext(UserContext)
 
   const handleAdicionarProduto = () => {
-    const newPostKey = push(child(ref(db), 'users')).key;
-    set(ref(db, `users/${uid}/products/${newPostKey}`), {
-        id: newPostKey,
-        name: itemAdicionar,
-        isChecked: false
-      });
-
-
-    setModalCOntrol(false)
-    setItemAdicionar("")
+    if (itemAdicionar){
+      const newPostKey = push(child(ref(db), 'users')).key;
+      set(ref(db, `users/${uid}/products/${newPostKey}`), {
+          id: newPostKey,
+          name: itemAdicionar,
+          isChecked: false
+        });
+  
+  
+      setModalCOntrol(false)
+      setItemAdicionar("")
+    }else{
+      Alert.alert('Aviso', 'Por favor, preencha algum item.');
+    }
+    
   }
 
 
@@ -43,7 +48,7 @@ const LCPrimaria = ({ navigation }) => {
         <View style={styles.modalContainer}>
           <View style={styles.modalStyle}>
             <Text style={styles.TextModal}>Escreva abaixo qual item deseja adicionar a lista:</Text>
-            <TextInput onChangeText={valor => setItemAdicionar(valor)} style={styles.TextInput} value={itemAdicionar} placeholder='Produto...' />
+            <TextInput onChangeText={valor => valor.length <= 20 ? setItemAdicionar(valor) : Alert.alert("Aviso", "Limite de caracteres Ultrapassado.")} style={styles.TextInput} value={itemAdicionar} placeholder='Produto...' />
 
             <TouchableOpacity onPress={handleAdicionarProduto} style={styles.botaoModalAdicionarProduto}>
               <Text style={styles.textoBotao}>Adicionar Produto!</Text>
@@ -73,7 +78,7 @@ const LCPrimaria = ({ navigation }) => {
       </View>
       
       {data && <FlatList data={data} keyExtractor={(item) => item.id} renderItem={({ item }) => {
-        return <ListItem item={item} />
+        return <ListItemPrimaryList item={item} />
       }} />}
     </View>
   )

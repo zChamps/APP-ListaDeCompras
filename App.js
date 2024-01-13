@@ -12,6 +12,8 @@ import Login from './src/Pages/Login';
 import { UserContextProvider } from './src/Context/UserContext';
 import LCPrimaria from './src/Pages/LCPrimaria';
 import { ProductsContextProvider } from './src/Context/ProductsContext';
+import LCSecundaria from './src/Pages/LCSecundaria';
+import LCSecundariaComponent from './src/Components/LCSecundariaComponent';
 
 
 const Stack = createNativeStackNavigator();
@@ -26,8 +28,10 @@ export default function App() {
           <Stack.Navigator>
             <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
             <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="LCPrimaria" component={LCPrimaria} options={({ route, navigation }) => ({ title: '', headerBackTitleVisible: false })} />
             <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+            <Stack.Screen name="LCPrimaria" component={LCPrimaria} options={({ route, navigation }) => ({ title: 'WD LISTA', headerBackTitleVisible: false, headerTitleStyle:{fontSize: 25, color: "#169C89"}, headerTitleAlign: "center" })} />
+            <Stack.Screen name="LCSecundaria" component={LCSecundaria} options={({ route, navigation }) => ({ title: 'WD LISTA', headerBackTitleVisible: false, headerTitleStyle:{fontSize: 25, color: "#169C89"}, headerTitleAlign: "center" })} />
+            <Stack.Screen name="LCSecundariaComponent" component={LCSecundariaComponent} options={({ route, navigation }) => ({ title: 'WD LISTA', headerBackTitleVisible: false, headerTitleStyle:{fontSize: 25, color: "#169C89"}, headerTitleAlign: "center" })} />
           </Stack.Navigator>
         </NavigationContainer>
       </ProductsContextProvider>
